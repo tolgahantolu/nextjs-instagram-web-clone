@@ -23,7 +23,9 @@ const Home = () => {
 
     const timeout = setTimeout(() => {
       setRedirect(true);
-      router.push("/login");
+      if (!user) {
+        router.push("/login");
+      }
     }, 2000);
 
     return () => {

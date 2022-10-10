@@ -10,12 +10,10 @@ import { setUser } from "../../store/authSlice";
 import { useRouter } from "next/router";
 
 import { login } from "../../firebase";
+import { Form, Formik } from "formik";
+import { LoginSchema } from "../../validation";
 
 const Login = () => {
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
-  const enable = username && password;
-
   const ref = useRef();
 
   const router = useRouter();
@@ -42,11 +40,8 @@ const Login = () => {
   }, [ref]);
 
   //  !submit handler
-  const handlerSubmit = async (e) => {
-    e.preventDefault();
-
-    await login(username, password);
-
+  const handlerSubmit = async (values, actions) => {
+    await login(values.username, values.password);
     router.push("/");
   };
 
@@ -100,56 +95,61 @@ const Login = () => {
             </a>
           </Link>
 
-          <form className="grid gap-y-2" onSubmit={handlerSubmit}>
-            {/* inputs */}
-            <Input
-              type="text"
-              value={username}
-              label="Phone number, username or email"
-              onChange={(e) => setUsername(e.target.value)}
-            />
+          <Formik
+            validationSchema={LoginSchema}
+            initialValues={{
+              username: "",
+              password: "",
+            }}
+            onSubmit={handlerSubmit}
+          >
+            {({ isSubmitting, dirty, isValid, values }) => (
+              <Form className="grid gap-y-2">
+                {/* inputs */}
+                <Input
+                  type="text"
+                  name="username"
+                  label="Phone number, username or email"
+                />
 
-            <Input
-              type="password"
-              value={password}
-              label="Password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
+                <Input type="password" name="password" label="Password" />
 
-            {/* btn */}
-            <button
-              type="submit"
-              disabled={!enable}
-              className="mt-2 h-[30px] rounded bg-brand font-semibold text-white text-sm disabled:opacity-50"
-            >
-              Log in
-            </button>
+                {/* btn */}
+                <button
+                  disabled={isSubmitting || !dirty || !isValid}
+                  type="submit"
+                  className="mt-2 h-[30px] rounded bg-brand font-semibold text-white text-sm disabled:opacity-50"
+                >
+                  Log in
+                </button>
 
-            {/* other */}
-            <div className="flex items-center my-2 mb-3">
-              <div className="h-px bg-gray-300 flex-1" />
-              <span className="px-4 font-semibold text-gray-500 text-[13px]">
-                OR
-              </span>
-              <div className="h-px bg-gray-300 flex-1" />
-            </div>
+                {/* other */}
+                <div className="flex items-center my-2 mb-3">
+                  <div className="h-px bg-gray-300 flex-1" />
+                  <span className="px-4 font-semibold text-gray-500 text-[13px]">
+                    OR
+                  </span>
+                  <div className="h-px bg-gray-300 flex-1" />
+                </div>
 
-            <Link href="/">
-              <a className="flex gap-x-2 justify-center items-center text-sm font-semibold text-facebook mb-2.5">
-                <GrFacebook size={16} />
-                Log in with Facebook
-              </a>
-            </Link>
-            <Link href="/">
-              <a className="text-xs flex justify-center items-center text-link font-semibold">
-                Forgot Password?
-              </a>
-            </Link>
-          </form>
+                <Link href="/">
+                  <a className="flex gap-x-2 justify-center items-center text-sm font-semibold text-facebook mb-2.5">
+                    <GrFacebook size={16} />
+                    Log in with Facebook
+                  </a>
+                </Link>
+                <Link href="/">
+                  <a className="text-xs flex justify-center items-center text-link font-semibold">
+                    Forgot Password?
+                  </a>
+                </Link>
+              </Form>
+            )}
+          </Formik>
         </div>
 
         <div className="bg-white border p-4 text-sm text-center font-medium">
-          Don't have an account?{" "}
+          Don't have an account?
           <Link href="/">
             <a className="text-brand">Sign up</a>
           </Link>
