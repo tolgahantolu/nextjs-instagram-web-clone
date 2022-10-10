@@ -7,7 +7,7 @@ import Loader from "../components/Loader";
 const Home = () => {
   const user = useSelector((state) => state.auth.user);
   console.log(user);
-  const [redirect, setRedirect] = useState(false);
+  //  const [redirect, setRedirect] = useState(false);
   const router = useRouter();
 
   function authCheck() {
@@ -21,19 +21,20 @@ const Home = () => {
   useEffect(() => {
     authCheck();
 
-    const timeout = setTimeout(() => {
-      setRedirect(true);
-      if (!user) {
-        router.push("/login");
-      }
-    }, 2000);
-
-    return () => {
-      clearTimeout(timeout);
-    };
+    //    const timeout = setTimeout(() => {
+    //      setRedirect(true);
+    //      if (!user) {
+    //        router.push("/login");
+    //      }
+    //    }, 2000);
+    //
+    //    return () => {
+    //      clearTimeout(timeout);
+    //    };
   }, []);
 
-  if (!user && !redirect) {
+  //  if (!user && !redirect) {
+  if (user === null) {
     return <Loader />;
   }
 
