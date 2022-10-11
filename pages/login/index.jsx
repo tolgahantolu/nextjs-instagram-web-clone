@@ -5,15 +5,18 @@ import Link from "next/link";
 import Input from "../../components/Input";
 import { GrFacebook } from "react-icons/gr";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../store/authSlice";
 import { useRouter } from "next/router";
 
 import { login } from "../../firebase";
 import { Form, Formik } from "formik";
 import { LoginSchema } from "../../validation";
+import Button from "../../components/Button";
+import Seperator from "../../components/Seperator";
 
 const Login = () => {
+  const user = useSelector((state) => state.auth.user);
   const ref = useRef();
 
   const router = useRouter();
@@ -39,10 +42,13 @@ const Login = () => {
     };
   }, [ref]);
 
+  if (user) {
+    router.push("/");
+  }
+
   //  !submit handler
   const handlerSubmit = async (values, actions) => {
     await login(values.username, values.password);
-    router.push("/");
   };
 
   return (
@@ -115,22 +121,15 @@ const Login = () => {
                 <Input type="password" name="password" label="Password" />
 
                 {/* btn */}
-                <button
+                <Button
                   disabled={isSubmitting || !dirty || !isValid}
                   type="submit"
-                  className="mt-2 h-[30px] rounded bg-brand font-semibold text-white text-sm disabled:opacity-50"
                 >
                   Log in
-                </button>
+                </Button>
 
                 {/* other */}
-                <div className="flex items-center my-2 mb-3">
-                  <div className="h-px bg-gray-300 flex-1" />
-                  <span className="px-4 font-semibold text-gray-500 text-[13px]">
-                    OR
-                  </span>
-                  <div className="h-px bg-gray-300 flex-1" />
-                </div>
+                <Seperator />
 
                 <Link href="/">
                   <a className="flex gap-x-2 justify-center items-center text-sm font-semibold text-facebook mb-2.5">
@@ -149,8 +148,8 @@ const Login = () => {
         </div>
 
         <div className="bg-white border p-4 text-sm text-center font-medium">
-          Don't have an account?
-          <Link href="/">
+          Don't have an account?{" "}
+          <Link href="/register">
             <a className="text-brand">Sign up</a>
           </Link>
         </div>
